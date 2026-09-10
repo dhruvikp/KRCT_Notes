@@ -19,6 +19,8 @@ KRCT
 	Optional:
 		- Adding bar chart + chartbar
 
+	Routing
+
 
 
 Lifting State Up
@@ -58,6 +60,27 @@ OUTPUTTING CONDITIONAL CONTENT
 
 
 Routing
+	-Your app grown into something genuinely distinct areas (add/view/dashboard --> aoubt/help etc)
+
+	Showing different content and changing the URL as user navigates
+	WITHOUT a full page reload (SPA - still applies)
+
+
+	react-router-dom
+
+	Three steps to routing:
+		1. define routes and which component mapts to which URL path
+		2. activate the router
+		3. add real navigation links between routes
+
+<Outlet /> - a placeholder that rnders whichever CHILD route currently matches the URL. RootLayout wraps that outlet with anything meant to persist across every pages.
+
+children: [...] --> nesting routes under RootLayout means EVERY one of them renders INSIDE RootLayout, in place of <Outlet />
+
+Advanage: - Differnet sections of real app (/admin) could get their OWN distinct layout, just by nesting under a different parent route - not needed yet, but good to know its there.
+
+
+
 
 
 

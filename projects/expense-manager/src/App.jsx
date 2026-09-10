@@ -6,6 +6,11 @@ import './App.css'
 import ExpenseItem from './components/Expenses/ExpenseItem'
 import Expenses from './components/Expenses/Expenses'
 import NewExpense from './components/NewExpense/NewExpense'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import RootLayout from './pages/Root';
+import ErrorPage from './pages/Error';
+import Dashboard from './pages/Dashboard';
+import About from './pages/About';
 
 const DUMP_EXPENSES = [
   { id: 'e1', title: 'Toilet Paper', amount: 94.12, date: new Date(2020, 7, 14) },
@@ -14,23 +19,23 @@ const DUMP_EXPENSES = [
   { id: 'e4', title: 'New Desk (Wooden)', amount: 450, date: new Date(2021, 5, 12) },
 ];
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootLayout />,
+    errorElement: <ErrorPage />,
+    children: [
+      { path: '/', element: <Dashboard /> },
+      { path: '/about', element: <About /> },
+    ],
+  },
+]);
+
+
 
 const App = () => {
-  const [expenses, setExpenses] = useState(DUMP_EXPENSES);
-  
-  const addExpenseHandler = (expense) => {
-    console.log('In App.js');
-    console.log(expense);
-    setExpenses((prevExpenses) => {
-      return [ expense, ...prevExpenses ];
-    });
-  };
-  
   return (
-    <div className="App">
-      <NewExpense onExpenseAdded={addExpenseHandler} />
-       <Expenses items={expenses} />
-    </div>
+     <RouterProvider router={router} />
   )
 }
 

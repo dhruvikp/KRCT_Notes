@@ -1,0 +1,4 @@
+.header { max-width: 60rem; margin: auto; padding: 2rem; display: flex; justify-content: center; }
+.list { display: flex; gap: 1rem; list-style: none; }
+.list a { text-decoration: none; color: #4a2b7d; }
+.list a:hover, .list a.active { color: #220131; text-decoration: underline; }
