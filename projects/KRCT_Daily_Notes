@@ -1,0 +1,228 @@
+KRCT
+
+
+
+
+====================================================================================
+10-Sep-2026
+====================================================================================
+
+	- Child-Parent communication 
+	- Lifting state up - 
+	- Adding ExpenseFilter component
+	- Render list with map (transformation) - list of expenses static
+		- Understanding "keys" - why react needs them
+	- Outputting conditional content
+	- Extract Expenselist as its own component(refactoring)
+
+	
+	Optional:
+		- Adding bar chart + chartbar
+
+
+
+Lifting State Up
+
+	Right now expenses is a plain constant in App. - it can never actually change.
+
+	"Lifting State  Up" means: when two or more components need to share or affect same data, move that data's state to their closest common parent - here APP itself.
+
+	App already sits above both NewExpense (which produces new expenses) and Expenses (which displays them) - the natural home for shared state.
+
+
+
+Stateful vs Statless components:
+	- A components that manages its own state (expenses, now) is called a stateful component.
+		A component that just receives and displays props (ExpenseItem, ExpenseFilter) is stateless component
+
+
+.map - transforms EVERY item in an array into a NEW array - here, an array of JSX elements, one per expense, of ANY length
+
+
+Why this erorr - key in the list should be available?
+-------
+	- 	When array changes, React compares the NEW list of elements to the OLD list.
+		Without any way to tell items apart individually, React can only compare them POSITIONALLY (item 1 vs item 1, item2 vs item2..)
+
+	- React then just overwrites each position's content to match - which is wasteful, and DANGEROUS the moment ExpenseItem holds its OWN internal state per instance - that per-instance state can end up attached to the WRONG logical expense.
+	
+
+	- Give react explicit, STABLE identity for each item via the key prop, so React can match old items to new items by IDENTITY, not position.
+
+
+
+OUTPUTTING CONDITIONAL CONTENT
+--------
+	Selecting year with zero matching expenses currently renders an empty, slightly awkward-looking card. Show a friendly fallback message instead.
+
+
+
+Routing
+
+
+
+
+
+====================================================================================
+9-Sep-2026
+====================================================================================
+
+How JSX Really Compiles
+-----
+	Undre the hood, JSX is transformed into calls to React.createElement
+
+	return (
+	<div className="App">
+		<h1> 
+
+		Let's get stareted </h1>
+	</div>
+	)
+
+
+	what it becomes (conceptually):
+
+		return React.createElement('div', {className:'App'}, React.createElement('h1', {}, "Let's get started"))
+
+
+- Use fragment <> ..</> -> groups elements without adding a real, visible wrapper element to the actual DOM. 
+
+return(
+	
+	<>
+		<h2>
+		</p>
+	</>
+
+)
+
+
+State: data that may change over time. When it changes, the UI should update to reflect it. Each component can maintain its OWN state, and multiple compoments can share state.
+
+Event: event handlers are added via PROPS to built-in components (like <button>). You pass a function as the value - react calls it when that event happens.
+
+Why - title not changed? - mechanical explaination:
+-----
+	- A component function only RUNS (and returns fresh JSX) when react calls it - normally once, when the component first placed on the page (mounted, via parent rendering it)
+	- clicking the button runs clickHandler - but clickHandler resasisning a local variable doesn't, by itself, tell React 'Please re-run Expenseitem and re-render its JSX'
+
+	you will need an explicit way to tell React ' Something changed, please re-evaluate this component'. That mechanism is STATE.
+
+
+useState - a function provided by React that lets a varaible be traced as STATE. 
+			changing a piece of state (via its setter function) teslls react to re-evaluate (re-run) that component funciton only.
+
+
+e.preventDefault() --> stops the browser's default full page reload/navigation behavior. 
+						This is the standard pattern for EVERY form submission in React SPA 
+
+
+Two way binding:
+-----
+
+- data currently flows ONE way: input -> state (via onChange). The input's visible content is still just the browser's own DOM value - React isn't actually controlling what is displayed, only reading it.
+
+
+
+Pattern to pass data from child to parent component:
+--------------
+	THe PARENT passes a FUNCTION down as prop; the CHILD calls that function.
+	passing data as an argument while calling that funciton
+
+
+
+
+
+
+
+
+
+
+
+====================================================================================
+8-Sep-2026
+====================================================================================
+
+
+What?
+	React - JavaScript Library for building user interfaces.
+
+
+Why not just JavaScript?
+	- Manually using document.getElementByID(...).innerHTML ==> across 100+ elements quickly becomes combersome, error-prone, and hard to maintain
+	- React offers simpler mental model: 
+		Describe - WHAT UI Should look like for given state,
+		let React figure out the actual DOM instructions
+
+
+	Imperative (Vanilla JS) - you give step-by-step instructiions: 'find this element, then change its text, then add this class..'
+	Declarative (React)		- you describe the DESIRED END STATE , react works out the DOM changes needed to get there.
+
+
+
+CRA - Create React App - classic/original tool, npx create-react-app my-app
+Vite -  Modern tool: npm create vite@latest, 
+		updated on save near-instantly (no full reload),
+		produces smaller/faster production builds,
+		uses browser's native ES moduels during development
+
+
+WhAT IS JSX?
+	- JSX = JavaScript XML - writing HTML like markup directly inside JavaScript
+	- Not valid in browser as -is - bul tool -> transform it into plain JavaScript before your code ever runs!
+
+
+	function App() {
+
+		return(
+			<div>
+				<h1>Let's get started. </h1>
+			</div>
+
+		)
+
+	}
+
+
+
+Component:
+	- speifically; a funciton that reutnrs JSX
+	- Naming convention: PasalCase, and finenae usually matches the component name
+	- One file, one component, is the standard convention 
+
+
+
+ONE ROOT ELEMENT RULE:
+	A component's JSX must return exactly ONE root element. 
+	<div className="APP"> ..</div>
+	is that single root here. everything. else nests inside it. 
+
+- Each component has its OWN CSS file, imported directly into the component file - this keeps styling co-loacated with the component that uses it.
+- className - connects the JSX element to a CSS class exactly like in plain HTML/CSS.
+
+
+Props:
+	component cannot reach into another component's variable directly - each comopnent fucntion is its own isolated scope
+	"props" - PARENT can hands data DOWN to a CHILD - 
+
+
+App (Holds data)
+	-> Expenses (renders list)
+		-> ExpenseItem (renders one card)
+			-> ExpenseDate (renders the Date badge)
+
+
+
+PRoblem:
+	duplicate CSS
+		- ExpenseItem.css and Expenses.css both declare border-radius and box-shadow - exact same visual 'card' treatement
+		- solution - extract reusable card wrapper component that any component can wrap itself it in to get that shared look
+
+
+
+	props.children - key concept
+		- whateer JSX you put between a component opening and closing tags is automatically avaialble inside that ocmponent as props.children
+
+		
+
+
