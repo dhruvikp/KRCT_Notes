@@ -1,14 +1,17 @@
 import ExpenseForm from './ExpenseForm';
 import './NewExpense.css';
+import ExpenseContext from '../../context/expenses-context';
+import { useContext } from 'react';
  
 function NewExpense(props) {
+const expenseCtx = useContext(ExpenseContext);
 
 const saveExpenseDataHandler = (enteredExpenseData) => {
   const expenseData = {
     ...enteredExpenseData,
     id: Math.random().toString()
   };
-  props.onExpenseAdded(expenseData);
+  expenseCtx.addExpense(expenseData);
 };
 
 

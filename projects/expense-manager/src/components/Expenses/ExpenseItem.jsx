@@ -1,22 +1,26 @@
+import { useDispatch } from 'react-redux';
+import './ExpenseItem.css';
 import ExpenseDate from './ExpenseDate';
-import './ExpenseItem.css'
 import Card from '../UI/Card';
-import {useState} from 'react';
-
+ 
 function ExpenseItem(props) {
-    return (
-      <li>
+  const dispatch = useDispatch();
+ 
+  const deleteHandler = () => {
+    dispatch({ type: 'DELETE', payload: props.id });
+  };
+ 
+  return (
+    <li>
       <Card className='expense-item'>
-          <ExpenseDate date={props.date} />
-            <div className="expense-item_description">
-              <h2>{props.title}</h2>
-              <div className="expense-item_price">${props.amount}</div>
-            </div>
-
-          </Card>
-
-      </li>
+        <ExpenseDate date={props.date} />
+        <div className='expense-item_description'>
+          <h2>{props.title}</h2>
+          <div className='expense-item_price'>${props.amount}</div>
+        </div>
+        <button onClick={deleteHandler}>Delete</button>
+      </Card>
+    </li>
   );
 }
-
 export default ExpenseItem;
